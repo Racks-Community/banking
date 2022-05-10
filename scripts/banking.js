@@ -16,6 +16,8 @@ const main = async () => {
     const porcentajeRepartir = 10
     //***** FIN CONFIGURACIÓN */
 
+    const comienzo = Date.now();
+
     // Crear un fork para revertir el estado de la cadena a la situación en el bloque final
     await network.provider.request({
       method: "hardhat_reset",
@@ -38,7 +40,8 @@ const main = async () => {
 
     // Leer total supply
     // const supply = await mrcContract.totalSupply();
-    const supply = 20; // Para pruebas
+    const supply = 10000; // Para pruebas
+    if(supply < 0) throw "El NFT no tiene supply";
 
     // Aquí se almacenará el total de bloques holdeados por todos los holders, para calcular después la media
     totalBlocks = 0;
@@ -46,17 +49,26 @@ const main = async () => {
     // Aquí se irá almacenando la cuenta de bloques holdeados por cada holder
     holderBlocks = {};
 
-    // Loop a todos los tokenIds
-    for( var id = 1; id<=supply; id++ ){
-      // Mostrar progreso
-      console.clear();
-      console.log("Procesando Mr Crypto %s", id);
-      // Leer owner actual
-      owner = await mrcContract.ownerOf(id);
+    console.clear();
+    console.log("Leyendo datos de la blockchain...");
+    // Crear las peticiones
+    const transferencias = []; 
+    for(var id = 1; id <= supply; id++){
+      transferencias.push(
+        mrcContract.queryFilter(mrcContract.filters.Transfer(null, null, id))
+      )
+    }
 
-      // Leer última transacción hacia el owner de este tokenid
-      transfer = await mrcContract.queryFilter(mrcContract.filters.Transfer(null, owner, id));
-      transfer = transfer[0];
+    // Esperar a que se resuelvan todas las promesas de forma asíncrona
+    const resultados = await Promise.all(transferencias);
+
+    console.clear();
+    console.log("Procesando datos obtenidos...");
+    // Loop a todas las transacciones leídas
+    for( var i = 0; i<=supply-1; i++ ){
+      transfer = resultados[i][0];
+      // Leer owner actual
+      owner = transfer.args.to;
       
       // Si el transfer se produjo antes del reveal, se cuenta solo el tiempo desde el reveal
       if(transfer.blockNumber < startBlockNumber){
@@ -72,7 +84,7 @@ const main = async () => {
       if(holderBlocks[owner] == undefined){
         holderBlocks[owner] = blockCount;
       }else{
-        holderBlocks[owner] = holderBlocks[owner] + blockCount
+        holderBlocks[owner] = holderBlocks[owner] + blockCount;
       }
     }
 
@@ -94,9 +106,11 @@ const main = async () => {
       }
     });
 
+    const fin = Date.now();
+
     console.clear();
-    console.log("Archivo creado correctamente")
-    console.log(holderAirdrop);
+    console.log("Archivo creado correctamente en %s segundos", (fin-comienzo)/1000);
+    // console.log(holderAirdrop);
 };
 
 const runMain = async () => {

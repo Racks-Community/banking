@@ -17,3 +17,5 @@ Para hacer el reparto, el script cuenta el número de bloques que un holder ha h
 Se hace el sumatorio de todos los bloques holdeados y las Rackoins se reparten en relación a los bloques holdeados de cada holder. Si la comunidad ha conseguido un holdeo de 10k bloques, yo me llevaré el 50% de ese 10% que se airdropeará con un holdeo de 5k bloques.
 
 Es necesario crear un archivo ".env" en la raíz del proyecto para indicar la key de Alchemy, con la línea "ALCHEMY_KEY=<key>".
+
+Update: Ahora la lectura a la blockchain se hace de forma asíncrona. Lo he ejecutado para los 10k MRC y ha tardado 37 min.
