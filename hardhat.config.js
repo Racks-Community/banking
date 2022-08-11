@@ -24,4 +24,11 @@ module.exports = {
       },
     ],
   },
+  defaultNetwork: "polygon",
+  networks: {
+    polygon: {
+      url: "https://polygon-rpc.com",
+      chainId: 137,
+    },
+  },
 };

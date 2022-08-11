@@ -19,3 +19,7 @@ Se hace el sumatorio de todos los bloques holdeados y las Rackoins se reparten e
 Es necesario crear un archivo ".env" en la raíz del proyecto para indicar la key de Alchemy, con la línea "ALCHEMY_KEY=<key>".
 
 Update: Ahora la lectura a la blockchain se hace de forma asíncrona. Lo he ejecutado para los 10k MRC y ha tardado 37 min.
+
+Update 11/08/2022: a raíz de un problema notificado por Kaladin, se ha hecho un análisis del proceso y se ha reconstruido la lectura de datos de la blockchain, pasando a hacer todo el proceso en aproximadamente 90 segundos.
+
+Nota: a veces salta una excepción HeadersTimeoutError. Se trata de un error devuelto por el RPC. Simplemente ejecuta de nuevo.
